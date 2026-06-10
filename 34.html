@@ -20,8 +20,8 @@
     const CHAPTERS = [
       { number: 1, title: "The Beginning", available: true },
       { number: 2, title: "A Cyber's World", available: true },
-      { number: 3, title: "Late Night", available: false },
-      { number: 4, title: "Prophecy", available: false },
+      { number: 3, title: "Late Night", available: true },
+      { number: 4, title: "Prophecy", available: true },
       { number: 5, title: "--", available: false },
       { number: 6, title: "--", available: false },
       { number: 7, title: "--", available: false }
@@ -164,23 +164,17 @@
       }
     }
 
-  function activateSelected() {
-  if (selectedChapter !== null) {
-    const rows = document.querySelectorAll('.row');
-    const row = rows[selectedChapter];
-    if (!row) return;
-
-    const chap = Number(row.dataset.chapter);
-
-    if (chap === 3 || chap === 4) {
-      alert("You really thought🤣");
-      return;
+    function activateSelected() {
+      if (selectedChapter !== null) {
+        const rows = document.querySelectorAll('.row');
+        const row = rows[selectedChapter];
+        if (!row) return;
+        menuSelectAudio.play();
+        const chap = row.dataset.chapter;
+        loadChapter(chap);
+      }
     }
 
-    menuSelectAudio.play();
-    loadChapter(chap);
-  }
-}
     // Event listeners
     document.addEventListener('keydown', (event) => {
       if (gameStarted) return;
@@ -200,44 +194,31 @@
 
     // Mouse interactions
     function setupMouseEvents() {
-  document.querySelectorAll('.row').forEach((row, index) => {
-    row.addEventListener('mouseenter', () => {
-      if (!gameStarted) {
-        menuMoveAudio.play();
-
-        if (selectedChapter !== null) {
-          document
-            .querySelectorAll('.row')[selectedChapter]
-            .classList.remove("selected");
-        }
-
-        selectChapter(index);
-      }
-    });
-
-    row.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      if (!gameStarted) {
-        const chap = Number(row.dataset.chapter);
-
-        // Fake-out Chapters 3 and 4
-        if (chap === 3 || chap === 4) {
-          alert("You really thought🤣");
-          return;
-        }
-
-        menuSelectAudio.play();
-
-        if (row.dataset.available === '1') {
-          loadChapter(chap);
-        } else {
-          alert(`Chapter ${chap} coming soon!`);
-        }
-      }
-    });
-  });
-}
+      document.querySelectorAll('.row').forEach((row, index) => {
+        row.addEventListener('mouseenter', () => {
+          if (!gameStarted) {
+            menuMoveAudio.play();
+            if (selectedChapter !== null) {
+              document.querySelectorAll('.row')[selectedChapter].classList.remove("selected");
+            }
+            selectChapter(index);
+          }
+        });
+        
+        row.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!gameStarted) {
+            menuSelectAudio.play();
+            const chap = row.dataset.chapter;
+            if (row.dataset.available === '1') {
+              loadChapter(chap);
+            } else {
+              alert(`Chapter ${chap} coming soon!`);
+            }
+          }
+        });
+      });
+    }
 
     // Handle page visibility changes to restart audio
     document.addEventListener('visibilitychange', () => {
@@ -273,3 +254,5 @@
   <script src="savesync.js"></script>
 </body>
 </html>
+
+make it make an alert when ch3 or 4 is clicked that says “You really thought🤣”
