@@ -6,14 +6,11 @@
   <title>DELTARUNE</title>
 </head>
 <body>
-  <div class="logo-container">
-    <img src="logo.png" alt="Logo" class="logo">
-  </div>
   <div class="menu" id="menu"></div>
   
   <audio id="drone" loop autoplay>
     <source src="chapter1/mus/audio_drone.ogg" type="audio/ogg">
-    Your browser does not support the audio element...?
+    Your browser does not support the audio element.
   </audio>
   <script>
     // Configuration
@@ -22,7 +19,7 @@
       { number: 2, title: "A Cyber's World", available: true },
       { number: 3, title: "Late Night", available: true },
       { number: 4, title: "Prophecy", available: true },
-      { number: 5, title: "--", available: false },
+      { number: 5, title: "Festival Day", available: true },
       { number: 6, title: "--", available: false },
       { number: 7, title: "--", available: false }
     ];
@@ -165,14 +162,14 @@
     }
 
   function activateSelected() {
-  if (selectedChapter !== null) {
+    if (selectedChapter !== null) {
     const rows = document.querySelectorAll('.row');
     const row = rows[selectedChapter];
     if (!row) return;
 
     const chap = Number(row.dataset.chapter);
 
-    if (chap === 3 || chap === 4) {
+    if (chap === 3 || chap === 4 || chap === 5) {
       alert("You really thought🤣");
       return;
     }
@@ -181,63 +178,56 @@
     loadChapter(chap);
   }
 }
+
     // Event listeners
     document.addEventListener('keydown', (event) => {
       if (gameStarted) return;
       
       switch(event.key) {
-        case 'ArrowUp':
+        case "ArrowUp":
+          event.preventDefault();
           navigateUp();
-          break;
-        case 'ArrowDown':
+        break;
+
+        case "ArrowDown":
+          event.preventDefault();
           navigateDown();
-          break;
-        case 'Enter':
+        break;
+
+        case "Enter":
           activateSelected();
-          break;
+        break;
+
       }
     });
 
     // Mouse interactions
     function setupMouseEvents() {
-  document.querySelectorAll('.row').forEach((row, index) => {
-    row.addEventListener('mouseenter', () => {
-      if (!gameStarted) {
-        menuMoveAudio.play();
-
-        if (selectedChapter !== null) {
-          document
-            .querySelectorAll('.row')[selectedChapter]
-            .classList.remove("selected");
-        }
-
-        selectChapter(index);
-      }
-    });
-
-    row.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      if (!gameStarted) {
-        const chap = Number(row.dataset.chapter);
-
-        // Fake-out Chapters 3 and 4
-        if (chap === 3 || chap === 4) {
-          alert("You really thought🤣");
-          return;
-        }
-
-        menuSelectAudio.play();
-
-        if (row.dataset.available === '1') {
-          loadChapter(chap);
-        } else {
-          alert(`Chapter ${chap} coming soon!`);
-        }
-      }
-    });
-  });
-}
+      document.querySelectorAll('.row').forEach((row, index) => {
+        row.addEventListener('mouseenter', () => {
+          if (!gameStarted) {
+            menuMoveAudio.play();
+            if (selectedChapter !== null) {
+              document.querySelectorAll('.row')[selectedChapter].classList.remove("selected");
+            }
+            selectChapter(index);
+          }
+        });
+        
+        row.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!gameStarted) {
+            menuSelectAudio.play();
+            const chap = row.dataset.chapter;
+            if (row.dataset.available === '1') {
+              loadChapter(chap);
+            } else {
+              alert(`Chapter ${chap} coming soon!`);
+            }
+          }
+        });
+      });
+    }
 
     // Handle page visibility changes to restart audio
     document.addEventListener('visibilitychange', () => {
